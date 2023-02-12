@@ -400,11 +400,7 @@ router.get("/api/bill_list",upload.array(),(request,response)=>{
 
 
 // 取得未付款的購物清單
-router.get("/api/cart/:billNumber",upload.array(),(request,response)=>{
-  let bill_number=request.query.billNumber
-  console.log(bill_number)
-  console.log("doo")
-  let temp_token = request.cookies.access_token
+router.get("/api/cart",upload.array(),(request,response)=>{
   jwt.verify(temp_token,jwt_secretkey,(err,payload)=>{
     if(err){
       console.log(403,"token無效，解開jwt失敗")
@@ -414,12 +410,14 @@ router.get("/api/cart/:billNumber",upload.array(),(request,response)=>{
       })
     }else{
       let member_id=payload.member_id
-      get_all_order_in_cart(connection_pool,member_id,response)
 
-      async function get_all_order_in_cart(connection_pool,member_id,response){
-        let get_order_list = await connect_to_database.get_order_list_inner_join_products_with_memeber_id_and_bill_number(connection_pool,member_id)
+
+      add_order_list_into_cart(connection_pool,member_id,product_id,quantity,bill_number,response)
+
+      async function add_order_list_into_cart(connection_pool,member_id,product_id,quantity,bill_number,response){
+        let upload_order_list = await connect_to_database.upload_order_list(connection_pool,member_id,product_id,quantity,bill_number)
         response.statusCode=200
-        response.json({message:get_order_list})
+        response.json({message:upload_order_list})
       }
     }
   })
@@ -429,7 +427,7 @@ router.get("/api/cart/:billNumber",upload.array(),(request,response)=>{
 
 
 // 加入購物車
-router.post("/api/cart",upload.array(),(request,response)=>{
+router.post("/api/client/chat_message",upload.array(),(request,response)=>{
   let temp_token = request.cookies.access_token
   jwt.verify(temp_token,jwt_secretkey,(err,payload)=>{
     if(err){
@@ -440,15 +438,15 @@ router.post("/api/cart",upload.array(),(request,response)=>{
       })
     }else{
       let member_id=payload.member_id
-      let product_id=request.body["product_id"]
-      let quantity = request.body["quantity"]
-      console.log()
-      let bill_number=""
+      let get_id = 1 //admin
+      console.log("lllllllllllllllllllllllllllllllllll")
 
-      add_order_list_into_cart(connection_pool,member_id,product_id,quantity,bill_number,response)
 
-      async function add_order_list_into_cart(connection_pool,member_id,product_id,quantity,bill_number,response){
-        let upload_order_list = await connect_to_database.upload_order_list(connection_pool,member_id,product_id,quantity,bill_number)
+      client_get_chat_message(connection_pool,member_id,get_id)
+
+      async function client_get_chat_message(connection_pool,send_id,get_id){
+        let upload_order_list = await connect_to_database.get_chat_message(connection_pool,send_id,get_id)
+        console.log(upload_order_list)
         response.statusCode=200
         response.json({message:upload_order_list})
       }
@@ -462,6 +460,39 @@ router.get("/test/cookie",(request,response)=>{
     "message":request.cookies
   })
 })
+
+
+
+
+
+// client 端取得聊天資料
+router.get("/api/client/chat_message",upload.array(),(request,response)=>{
+  let temp_token = request.cookies.access_token
+  jwt.verify(temp_token,jwt_secretkey,(err,payload)=>{
+    if(err){
+      console.log(403,"token無效，解開jwt失敗")
+      response.json({
+        error:true,
+        "message":"token無效，解開jwt失敗"
+      })
+    }else{
+      let member_id=payload.member_id
+      let get_id = 1 //admin
+      console.log("lllllllllllllllllllllllllllllllllll")
+
+
+      client_get_chat_message(connection_pool,member_id,get_id)
+
+      async function client_get_chat_message(connection_pool,member_id,get_id){
+        let get_chat_message = await connect_to_database.get_chat_message(connection_pool,member_id,get_id)
+        console.log(get_chat_message)
+        response.statusCode=200
+        response.json({message:get_chat_message})
+      }
+    }
+  })
+})
+
 
 
 

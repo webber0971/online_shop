@@ -308,6 +308,29 @@ function get_bill_list(connection_pool,member_id){
     })
 }
 
+function get_chat_message(connection_pool,member_id,get_id){
+    return new Promise((resolve,reject)=>{
+        connection_pool.getConnection((err,connection)=>{
+            if(err){
+                console.log("連線失敗")
+                reject("連線失敗")
+            }else{
+                sql = "select * from chat_message where (send_id = (?) or send_id = (?)) and (get_id = (?) or get_id = (?)) order by message_id asc"
+                bill_number=0
+                val = [member_id,get_id,member_id,get_id]
+                connection.query(sql,val,(err,res)=>{
+                    connection.release()
+                    if(err){
+                        reject("sql錯誤")
+                    }else{
+                        resolve(res)
+                    }
+                })
+            }
+        })
+    })
+}
+
 
 
 
@@ -326,3 +349,4 @@ module.exports.get_order_list_inner_join_products_with_memeber_id_and_bill_numbe
 module.exports.update_bill_number=update_bill_number
 module.exports.insert_bill_list=insert_bill_list
 module.exports.get_bill_list=get_bill_list
+module.exports.get_chat_message=get_chat_message
