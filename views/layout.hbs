@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{title}}</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <div id="backgroundFilter" class="backgroundFilter"></div>
+    {{!-- <div class="wrap"> --}}
+    <div class="container">
+      <div class="header wrap" id="header_wrap">
+        <script src="/javascripts/build_layout.js"></script>
+      </div>
+
+      <div class="content">
+        <div style="background-color: rgb(255, 255, 255);"></div>
+        <div>
+          <div class="account"></div>
+          {{!-- 建立會員登入頁面 --}}
+          <script src="/javascripts/build_account_page.js"></script>
+          <div class="content_mid">
+            {{{body}}}
+          </div>
+
+        </div>
+        <div style="background-color: rgb(255, 255, 255);"></div>
+      </div>
+
+      <div class="footer">
+      </div>
+    </div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '1247016612579120',
+          cookie     : true,
+          xfbml      : true,
+        });
+          
+        FB.AppEvents.logPageView();   
+      };
+      (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
+  </body>
+</html>
