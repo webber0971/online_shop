@@ -25,7 +25,7 @@ async function cart_init(){
     let order_list =await cart_get_order_list_number_in_cart()
     console.log(order_list)
     if(order_list.message.length !=0){
-        cart_generate_lsit_all(order_list)
+        cart_generate_list_all(order_list)
         generate_histort_order_list(order_list)
     }else{
         let message= document.getElementById("message")
@@ -52,7 +52,8 @@ async function generate_histort_order_list(){
     let bill_list_entries = Object.entries(bill_list)
     console.log(bill_list_entries)
     console.log(bill_list_entries[0])
-    for(let i=0;i<bill_list_entries.length;i++){
+    // for(let i=0;i<bill_list_entries.length;i++){
+    for(let i=bill_list_entries.length-1;i>=0;i--){
         let one_bill = bill_list_entries[i]
         console.log(one_bill)
         let bill_number = one_bill[0]
@@ -93,7 +94,7 @@ function cart_get_order_list_number_in_cart(){
     })
 }
 
-function cart_generate_lsit_all(order_list){
+function cart_generate_list_all(order_list){
     let cart_list = document.querySelector(".cart_list")
     cart_list.innerHTML=""
     let column_title = document.createElement("div")

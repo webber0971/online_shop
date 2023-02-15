@@ -146,6 +146,7 @@ function add_to_the_cart(product_id,quantity){
         let fd = new FormData()
         fd.append("product_id",product_id)
         fd.append("quantity",quantity)
+        console.log(product_id)
         fetch("/api/cart",{
             method: "post",
             body:fd

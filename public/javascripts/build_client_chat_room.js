@@ -1,3 +1,4 @@
+// import {io} from "socket.io-client"
 
 let client_connect_to_server = document.querySelector(".client_connect_to_server")
 client_connect_to_server.setAttribute("class","client_connect_to_server")
@@ -57,10 +58,103 @@ client_chat_room_open_button.addEventListener("click",()=>{
         client_chat_room.style.display="none"
     }
 })
-insert_message_to_message_room()
-history_chat_information.addEventListener("scroll",function(){
-    console.log("scroTOP : ",history_chat_information.scrollHeight)
-})
+
+let client_id =""
+
+init_chat_room(client_id)
+console.log(client_id)
+
+async function init_chat_room(client_id){
+    insert_message_to_message_room()
+    client_id = await get_member_information_by_access_token_in_cookie()
+    websocker(client_id)
+    
+}
+
+
+
+
+
+function websocker(client_id){
+    let socket = io("http://localhost:3000/")
+
+    socket.emit("enter_room",client_id)
+
+    socket.on("user_entered",(client_id)=>{
+        console.log("server 回傳",client_id)
+    })
+
+    socket.on("chat message",function(msg){
+        console.log(msg)
+        let one_message = document.createElement("div")
+        let item = document.createElement("li")
+        let next_line = document.createElement("br")
+            
+        // client send to admin
+        if(msg.get_id == 0 && msg.send_id == client_id){
+            one_message.setAttribute("class","one_clinet_message")
+            item.setAttribute("class","message_client")
+            item.textContent=msg.chat_information
+            history_chat_information.appendChild(one_message)
+            history_chat_information.appendChild(next_line)
+            one_message.appendChild(item)
+            history_chat_information.scrollTo(0,history_chat_information.scrollHeight)
+        }
+        if(msg.get_id == client_id && msg.send_id == 0 ){
+            one_message.setAttribute("class","one_admin_message")
+            item.setAttribute("class","message_admin")
+            item.textContent=msg.chat_information
+            history_chat_information.appendChild(one_message)
+            history_chat_information.appendChild(next_line)
+            one_message.appendChild(item)
+            history_chat_information.scrollTo(0,history_chat_information.scrollHeight)
+        }
+        console.log(msg)
+
+    })
+
+    send_chat_information_form.addEventListener("submit",function(e){
+        e.preventDefault()
+        let message_text = chat_bar_input.value
+        console.log(client_id)
+        if(client_id == undefined){
+            let login_page = document.querySelector(".login_page")
+            login_page.style.display="block"
+        }else{
+            if(chat_bar_input.value != ""){
+                let message = {get_id : 0,send_id : client_id,chat_information:message_text}
+                socket.emit("chat message",message)
+                chat_bar_input.value=""
+                let fd = new FormData()
+                fd.append("information",message_text)
+                fetch("/api/chat_message",{method:"post",body:fd}).then((res)=>res.json()).then((data)=>{console.log(data)}).catch(err=>console.log(err))
+            }            
+        }
+
+
+    })
+}
+
+
+
+// 取得memeber id
+function get_member_information_by_access_token_in_cookie(){
+    return new Promise((resolve,reject)=>{
+        fetch("/api/member",{
+            method:"get",
+        })
+        .then((res)=>res.json())
+        .then((data)=>{
+            console.log(data)
+            client_id=data.member_id
+            get_order_list_number_in_cart()
+            resolve(data.member_id)
+        }).catch(error=>{
+            console.log("error",error)
+            reject(error)
+        })
+    })
+}
 
 
 
@@ -86,7 +180,6 @@ async function insert_message_to_message_room(){
             history_chat_information.scrollTo(0,history_chat_information.scrollHeight)
         }
         history_chat_information.scrollTo(0,history_chat_information.scrollHeight)
-        console.log(history_chat_information.scrollHeight)
     })
 }
 

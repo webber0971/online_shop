@@ -1,22 +1,23 @@
 var mysql = require('mysql');
-const connect_to_database = require("../public/javascripts/connect_to_database")
-
+const connect_to_database = require("../routes/controllers/connect_to_database")
+require("dotenv").config()
 
 var connection_pool = mysql.createPool({
     connectionLimit:10,
-    host     : "database-webber0971.ccvnmmc1xk8w.us-east-1.rds.amazonaws.com",
-    user     : "admin",
-    password : "123456789",
-    database : "online_shop"
+    host     : process.env.RDS_HOST,
+    user     : process.env.RDS_USER,
+    password : process.env.RDS_PASSWORD,
+    database : process.env.RDS_DATABASE
 });
 // check_account_1(connect_to_database)
-get_products_information_their_status_is_selling_1(connect_to_database)
+// get_products_information_their_status_is_selling_1(connect_to_database)
+upload_product_1(connect_to_database)
 
 
 // 上傳新品
 async function upload_product_1(connect_to_database){
-    let name_temp="螺獅粉"
-    let image_url = "https://d3ce9biuqz84nv.cloudfront.net/vegan-kimchi-noodle-soup-spicy-rich-broth-with-tofu-and-mushrooms-thumb.jpg"
+    let name_temp="青花椒烤雞"
+    let image_url = "https://d3ce9biuqz84nv.cloudfront.net/quick-and-easy-meal-planner-128684-2.jpg"
     let info = ""
     let check_account = await connect_to_database.upload_product(connection_pool,name_temp,image_url,info)
     console.log(check_account)
