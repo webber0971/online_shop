@@ -70,6 +70,52 @@ function get_member_info(connection_pool,email){
         })
     })
 }
+// get member table information with member_id 
+function get_member_info_by_member_id(connection_pool,member_id){
+    return new Promise((resolve,reject)=>{
+        connection_pool.getConnection((err,connection)=>{
+            if(err){
+                console.log("連線失敗")
+                reject("連線失敗")
+            }else{
+                sql = "select member_id,name,chat_status,latest_message_time from member where member_id = (?)"
+                val = member_id
+                connection.query(sql,[val],(err,res)=>{
+                    connection.release()
+                    if(err){
+                        reject("sql錯誤")
+                    }else{
+                        resolve(res)
+                    }
+                })
+            }
+        })
+    })
+}
+
+function get_all_member_chat_info(connection_pool){
+    return new Promise((resolve,reject)=>{
+        connection_pool.getConnection((err,connection)=>{
+            if(err){
+                console.log("連線失敗")
+                reject("連線失敗")
+            }else{
+                sql = "select member_id,name,chat_status,latest_message_time,process_status from member"
+                connection.query(sql,(err,res)=>{
+                    connection.release()
+                    if(err){
+                        reject("sql錯誤")
+                    }else{
+                        resolve(res)
+                    }
+                })
+            }
+        })
+    })
+}
+
+
+
 
 // upload new product to products table
 function upload_product(connection_pool,product_name,product_image_url,product_information){
@@ -248,6 +294,33 @@ function update_bill_number(connection_pool,order_list_id,bill_number){
     })
 }
 
+
+
+function update_bill_status(connection_pool,bill_number,bill_status){
+    return new Promise((resolve,reject)=>{
+        connection_pool.getConnection((err,connection)=>{
+            if(err){
+                console.log("連線失敗")
+                reject("連線失敗")
+            }else{
+                sql = "update bill_list set bill_status = (?) where bill_number = (?)"
+                val = [bill_status,bill_number]
+                connection.query(sql,val,(err,res)=>{
+                    connection.release()
+                    if(err){
+                        reject("sql錯誤")
+                    }else{
+                        resolve(res)
+                    }
+                })
+            }
+        })
+    })
+}
+
+
+
+
 function insert_bill_list(connection_pool,bill_number,member_id){
     return new Promise((resolve,reject)=>{
         connection_pool.getConnection((err,connection)=>{
@@ -312,17 +385,17 @@ function get_bill_list(connection_pool,member_id){
     })
 }
 
-function get_chat_message(connection_pool,member_id,get_id){
+
+// get all bill
+function get_all_bill_list(connection_pool){
     return new Promise((resolve,reject)=>{
         connection_pool.getConnection((err,connection)=>{
             if(err){
                 console.log("連線失敗")
                 reject("連線失敗")
             }else{
-                sql = "select * from chat_message where (send_id = (?) or send_id = (?)) and (get_id = (?) or get_id = (?)) order by message_id asc"
-                bill_number=0
-                val = [member_id,get_id,member_id,get_id]
-                connection.query(sql,val,(err,res)=>{
+                sql = "select * from order_list inner join bill_list on order_list.bill_number = bill_list.bill_number  inner join products on order_list.product_id = products.product_id"
+                connection.query(sql,(err,res)=>{
                     connection.release()
                     if(err){
                         reject("sql錯誤")
@@ -335,15 +408,92 @@ function get_chat_message(connection_pool,member_id,get_id){
     })
 }
 
-function insert_chat_message(connection_pool,send_id,get_id,information){
+
+
+
+
+function get_chat_message(connection_pool,member_id,get_id){
     return new Promise((resolve,reject)=>{
         connection_pool.getConnection((err,connection)=>{
             if(err){
                 console.log("連線失敗")
                 reject("連線失敗")
             }else{
-                sql = "insert into chat_message(send_id,get_id,information) values (?)"
-                val = [send_id,get_id,information]
+                sql = "select * from chat_message where (send_id = (?) or send_id = (?)) and (get_id = (?) or get_id = (?)) order by message_id asc"
+                val = [member_id,get_id,member_id,get_id]
+                connection.query(sql,val,(err,res)=>{
+                    connection.release()
+                    if(err){
+                        console.log(err)
+                        reject(err)
+                    }else{
+                        console.log(res)
+                        resolve(res)
+                    }
+                })
+            }
+        })
+    })
+}
+
+// get all message
+function get_all_chat_message(connection_pool){
+    return new Promise((resolve,reject)=>{
+        connection_pool.getConnection((err,connection)=>{
+            if(err){
+                console.log("連線失敗")
+                reject("連線失敗")
+            }else{
+                sql = "select * from chat_message order by message_id desc"
+                connection.query(sql,(err,res)=>{
+                    connection.release()
+                    if(err){
+                        console.log(err)
+                        reject("sql錯誤")
+                    }else{
+                        resolve(res)
+                    }
+                })
+            }
+        })
+    })
+}
+// get all message by user_id
+function get_all_chat_message_by_user_id(connection_pool,user_id){
+    return new Promise((resolve,reject)=>{
+        connection_pool.getConnection((err,connection)=>{
+            if(err){
+                console.log("連線失敗")
+                reject("連線失敗")
+            }else{
+                sql = "select * from chat_message where send_id = (?) or get_id = (?)  order by message_id desc"
+                val = [user_id,user_id]
+                connection.query(sql,val,(err,res)=>{
+                    connection.release()
+                    if(err){
+                        console.log(err)
+                        reject("sql錯誤")
+                    }else{
+                        resolve(res)
+                    }
+                })
+            }
+        })
+    })
+}
+
+
+
+
+function insert_chat_message(connection_pool,send_id,get_id,information,local_date){
+    return new Promise((resolve,reject)=>{
+        connection_pool.getConnection((err,connection)=>{
+            if(err){
+                console.log("連線失敗")
+                reject("連線失敗")
+            }else{
+                sql = "insert into chat_message(send_id,get_id,information,date) values (?)"
+                val = [send_id,get_id,information,local_date]
                 connection.query(sql,[val],(err,res)=>{
                     connection.release()
                     if(err){
@@ -357,6 +507,102 @@ function insert_chat_message(connection_pool,send_id,get_id,information){
         })
     })
 }
+
+// insert new production information to db
+function insert_new_product(connection_pool,image_url,product_name,product_price,product_status){
+    return new Promise((resolve,reject)=>{
+        connection_pool.getConnection((err,connection)=>{
+            if(err){
+                console.log("連線失敗")
+                reject("連線失敗")
+            }else{
+                sql = "insert into products(product_name,image_url,status,price) values (?)"
+                val = [product_name,image_url,product_status,product_price]
+                connection.query(sql,[val],(err,res)=>{
+                    connection.release()
+                    if(err){
+                        reject("sql錯誤")
+                    }else{
+                        console.log("存入db")
+                        resolve(res)
+                    }
+                })
+            }
+        })
+    })
+}
+
+function update_product_status(connection_pool,prodict_id,product_status){
+    return new Promise((resolve,reject)=>{
+        connection_pool.getConnection((err,connection)=>{
+            if(err){
+                console.log("連線失敗")
+                reject("連線失敗")
+            }else{
+                sql = "update products set status = (?) where product_id = (?)"
+                val = [product_status,prodict_id]
+                connection.query(sql,val,(err,res)=>{
+                    connection.release()
+                    if(err){
+                        console.log(err)
+                        reject("sql錯誤")
+                    }else{
+                        resolve(res)
+                    }
+                })
+            }
+        })
+    })
+}
+
+
+function update_member_chat_status(connection_pool,send_id,member_chat_status){
+    return new Promise((resolve,reject)=>{
+        connection_pool.getConnection((err,connection)=>{
+            if(err){
+                console.log("連線失敗")
+                reject("連線失敗")
+            }else{
+                sql = "update member set chat_status = (?) where member_id = (?)"
+                val = [member_chat_status,send_id]
+                connection.query(sql,val,(err,res)=>{
+                    connection.release()
+                    if(err){
+                        reject("sql錯誤")
+                    }else{
+                        resolve(res)
+                    }
+                })
+            }
+        })
+    })
+}
+
+
+function update_member_process_status(connection_pool,client_id,process_status){
+    return new Promise((resolve,reject)=>{
+        connection_pool.getConnection((err,connection)=>{
+            if(err){
+                console.log("連線失敗")
+                reject("連線失敗")
+            }else{
+                sql = "update member set process_status = (?) where member_id = (?)"
+                val = [process_status,client_id]
+                connection.query(sql,val,(err,res)=>{
+                    connection.release()
+                    if(err){
+                        reject("sql錯誤")
+                    }else{
+                        resolve(res)
+                    }
+                })
+            }
+        })
+    })
+}
+
+
+
 
 
 
@@ -378,3 +624,13 @@ module.exports.insert_bill_list=insert_bill_list
 module.exports.get_bill_list=get_bill_list
 module.exports.get_chat_message=get_chat_message
 module.exports.insert_chat_message=insert_chat_message
+module.exports.insert_new_product=insert_new_product
+module.exports.update_product_status=update_product_status
+module.exports.get_all_bill_list=get_all_bill_list
+module.exports.update_bill_status=update_bill_status
+module.exports.get_all_chat_message=get_all_chat_message
+module.exports.get_member_info_by_member_id=get_member_info_by_member_id
+module.exports.get_all_member_chat_info=get_all_member_chat_info
+module.exports.update_member_chat_status=update_member_chat_status
+module.exports.update_member_process_status=update_member_process_status
+module.exports.get_all_chat_message_by_user_id=get_all_chat_message_by_user_id

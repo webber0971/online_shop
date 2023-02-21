@@ -135,26 +135,56 @@ body{
     cursor:pointer;
     margin:0 auto;
 }
+
+
 .product_quantity_list:active{
     cursor:pointer;
     position:relative;
     top:2px;
 }
-.check_bll_list_page{
-    display: none;
+.check_bill_list_page{
+    height: 100%;
     margin: 5%;
 }
+.selling_chart{
+    margin-top: 40px;
+    display: none;
+}
+.check_bill_list{
+    display: none;
+}
+.staff_report{
+    height: 100%;
+    display: none;
+    margin: 5%; 
+}
 .check_bill_list_page_title{
+    background-color: #f7e7a1;
+    font-size: large;
+    padding: 10px;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
     margin-top:4%;
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+.check_bill_list_page_box{
+    /* display: none; */
+    height: 70%;
+}
+.check_one_bill{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    margin-bottom: 10px;
 }
 .check_bill_list_page_info{
-    height: 400px;
+    padding: 10px;
+    overflow: scroll;
+    height: 100%;
     background-color: #fdf8e3;
 }
 .upload_and_delete_new_products{
-    display: grid;
+    display: none;
     grid-template-columns: 1fr 1fr;
     height: 400px;
 }
@@ -175,7 +205,6 @@ body{
 .center {
   position: relative;
   padding: 50px 50px;
-  background: #fff;
   border-radius: 10px;
 }
 .center h1 {
@@ -192,7 +221,7 @@ body{
   position: relative;
   width: 70%;
   height: 50px;
-  /* margin-bottom: 50px; */
+  margin-bottom: 15px;
 }
 .center .inputbox input {
   position: absolute;
@@ -233,7 +262,7 @@ body{
 }
 select{
     position: relative;
-    width: 80%;
+    width: 77%;
     height: 50px;
     border-radius: 10px;
     border: 2px solid #000;
@@ -243,4 +272,88 @@ select{
 }
 img{
     border-radius: 10px;
+}
+
+
+
+.staff_report_page_title{
+    background-color: #f7e7a1;
+    font-size: large;
+    padding: 10px;
+    margin-top:4%;
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr 1.5fr 1fr;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
+.staff_report_unfinished_bill_list_info{
+    display: block;
+    overflow: scroll;
+    padding: 10px;
+    height: 100%;
+    background-color: #fffae4;
+}
+.staff_report_finished_bill_list_info{
+    display: none;
+    overflow: scroll;
+    padding: 10px;
+    height: 100%;
+    background-color: #fffae4;
+}
+
+.staff_report_one_bill{
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr 1.5fr 1fr;
+}
+.bill_submit{
+    cursor: pointer;
+}
+.bill_submit:hover{
+    color: #ae6d4b;
+}
+.staff_report_unfinished_bill_selector{
+    font:bold 20px "Arial Black", Gadget, sans-serif;
+    font-style:normal;
+    color:#ffd324;
+    background:#04052d;
+    border:0px outset #4a3a00;
+    text-shadow:0px -1px 8px #0d0d0d;
+    box-shadow:-2px 0px 12px #2e2300;
+    -moz-box-shadow:-2px 0px 12px #2e2300;
+    -webkit-box-shadow:-2px 0px 12px #2e2300;
+    border-radius:15px 15px 15px 15px;
+    -moz-border-radius:15px 15px 15px 15px;
+    -webkit-border-radius:15px 15px 15px 15px;
+    width:70px;
+    padding:20px 46px;
+    cursor:pointer;
+    margin:0 auto;
+
+}
+.staff_report_finished_bill_selector{
+    font:bold 20px "Arial Black", Gadget, sans-serif;
+    font-style:normal;
+    color:#ffd324;
+    background:#04052d;
+    border:0px outset #4a3a00;
+    text-shadow:0px -1px 8px #0d0d0d;
+    box-shadow:-2px 0px 12px #2e2300;
+    -moz-box-shadow:-2px 0px 12px #2e2300;
+    -webkit-box-shadow:-2px 0px 12px #2e2300;
+    border-radius:15px 15px 15px 15px;
+    -moz-border-radius:15px 15px 15px 15px;
+    -webkit-border-radius:15px 15px 15px 15px;
+    width:70px;
+    padding:20px 46px;
+    cursor:pointer;
+    margin:0 auto;
+}
+.staff_bill_list_page_box{
+    height: 70%;
+}
+.my_chart{
+    height: 300px;
+    width: 300px;
 }

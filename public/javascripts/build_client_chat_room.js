@@ -1,4 +1,3 @@
-// import {io} from "socket.io-client"
 
 let client_connect_to_server = document.querySelector(".client_connect_to_server")
 client_connect_to_server.setAttribute("class","client_connect_to_server")
@@ -89,9 +88,12 @@ function websocker(client_id){
         let one_message = document.createElement("div")
         let item = document.createElement("li")
         let next_line = document.createElement("br")
+        console.log("eoeoeoo")
+        console.log(client_id)
+    
             
         // client send to admin
-        if(msg.get_id == 0 && msg.send_id == client_id){
+        if(msg.get_id == 1 && msg.send_id == client_id){
             one_message.setAttribute("class","one_clinet_message")
             item.setAttribute("class","message_client")
             item.textContent=msg.chat_information
@@ -100,7 +102,7 @@ function websocker(client_id){
             one_message.appendChild(item)
             history_chat_information.scrollTo(0,history_chat_information.scrollHeight)
         }
-        if(msg.get_id == client_id && msg.send_id == 0 ){
+        if(msg.get_id == client_id && msg.send_id == 1 ){
             one_message.setAttribute("class","one_admin_message")
             item.setAttribute("class","message_admin")
             item.textContent=msg.chat_information
@@ -122,11 +124,13 @@ function websocker(client_id){
             login_page.style.display="block"
         }else{
             if(chat_bar_input.value != ""){
-                let message = {get_id : 0,send_id : client_id,chat_information:message_text}
+                let admin_id = 1
+                let message = {get_id : admin_id,send_id : client_id,chat_information:message_text}
                 socket.emit("chat message",message)
                 chat_bar_input.value=""
                 let fd = new FormData()
                 fd.append("information",message_text)
+                fd.append("get_id",admin_id)
                 fetch("/api/chat_message",{method:"post",body:fd}).then((res)=>res.json()).then((data)=>{console.log(data)}).catch(err=>console.log(err))
             }            
         }
