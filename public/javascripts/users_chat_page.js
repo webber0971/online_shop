@@ -1,12 +1,18 @@
 
 let client_list_box = document.querySelector(".client_list_box")
+let add_friend_box = document.querySelector(".add_friend_box")
 let users_chat_room_box = document.querySelector(".users_chat_room_box")
 let users_chat_room_box_content =document.querySelector(".users_chat_room_box_content")
 let send_chat_information_form = document.getElementById("form")
+let add_friend_form = document.getElementById("add_friend_form")
+let go_to_chat_room_list_button = document.getElementById("go_to_chat_room_list_button")
+
+let phone_call_button = document.getElementById("phone_call_button")
 
 let search_history_text_button = document.getElementById("search_history_text_button")
 let processed_selector = document.getElementById("processed_selector")
 let pending_selector = document.getElementById("pending_selector")
+let add_friend_button = document.getElementById("add_friend_button")
 
 let filter_unread = document.getElementById("filter_unread")
 let filter_pending = document.getElementById("filter_pending")
@@ -38,22 +44,47 @@ async function init() {
 // 刷新聊天室 client list 順序、狀態
 async function refresh_chat_room_selector_list(){
     let user_id = send_chat_information_form.getAttribute("user_id")
-    let url = "/users/api/client_send_message_array/?user_id="+String(user_id)
-    console.log(url)
-    let client_chat_order_array = await fetch(url, { method: "get" }).then(res => res.json()).then((data) => { return data })
-    console.log(client_chat_order_array)
-    let all_client_chat_status = await fetch("/users/api/get_all_member_information_about_chat_status", { method: "get" }).then(res => res.json()).then((data) => { return data })
-    console.log(all_client_chat_status)
+    let url ="/users/api/get_all_friends_status_list_by_member_id/?user_id="+String(user_id)
+    let get_all_friends_status_by_member_id = await fetch(url, { method: "get" }).then(res => res.json()).then((data) => { return data })
+    let client_id = send_chat_information_form.getAttribute("client_id")    
+    let focus_room_selector_id = "one_client_chat_room_selector"+String(client_id)
+    console.log(focus_room_selector_id)
+    console.log("+++++++++++++")
+
+
+    console.log(get_all_friends_status_by_member_id)
     client_selector_list.textContent=""
-    for (let i = 0; i < client_chat_order_array.message.length; i++) {
-        let client_id = client_chat_order_array.message[i]
-        let client_name = all_client_chat_status.message[client_id - 1].name
-        let client_chat_status = all_client_chat_status.message[client_id - 1].chat_status
-        let client_latest_message_time = all_client_chat_status.message[client_id - 1].latest_message_time.substring(0, 10)
-        let process_status = all_client_chat_status.message[client_id - 1].process_status
+    for (let i = 0; i < get_all_friends_status_by_member_id.message.length; i++) {
+        let client_id = get_all_friends_status_by_member_id.message[i].send_id
+        console.log(client_id)
+        let client_name = get_all_friends_status_by_member_id.message[i].name
+        let read_message_id = get_all_friends_status_by_member_id.message[i].read_message_id
+        let unread_message_id = get_all_friends_status_by_member_id.message[i].unread_message_id
+        let client_chat_status = ""
+        if(read_message_id==null){
+            read_message_id=0
+        }
+        if(unread_message_id==null){
+            unread_message_id=0
+        }
+        if(parseInt(read_message_id)>=parseInt(unread_message_id)){
+            client_chat_status="已讀"
+        }else{
+            client_chat_status="未讀"
+        }
+        console.log("read_message_id",read_message_id)
+        console.log("unread_message_id",unread_message_id)
+        console.log("讀寫狀態",client_chat_status)
+        let client_latest_message_time = get_all_friends_status_by_member_id.message[i].latest_time.substring(0, 10)
+        let process_status = get_all_friends_status_by_member_id.message[i].process_status
         console.log(process_status)
-        generate_one_client_chat_room_selector(client_id, client_name, client_chat_status, client_latest_message_time,process_status)
+        generate_one_client_chat_room_selector(client_id, client_name, client_chat_status, client_latest_message_time,process_status,read_message_id,unread_message_id)
     }
+    let focus_room_selector = document.getElementById(focus_room_selector_id)
+    focus_room_selector.setAttribute("class","one_client_chat_room_selector_focus")
+    console.log(focus_room_selector)
+    console.log("---------------------------")
+
 }
 
 
@@ -62,6 +93,7 @@ async function refresh_chat_room_selector_list(){
 // process_status filter
 
 function add_some_button_listener(){
+    
     $("#selector_list_search").on("input", function() {
         var text=$(this).val().trim();
         console.log(text);
@@ -75,7 +107,51 @@ function add_some_button_listener(){
             }
         }
     });
+
+
+    phone_call_button.addEventListener("click",()=>{
+            // check_bll_list_page.style.display="block"
+        let user_id = send_chat_information_form.getAttribute("user_id")
+        let friend_id = send_chat_information_form.getAttribute("client_id")    
+
+
+        url = "/users/rooms/new/?user_id="+user_id+"&friend_id="+friend_id
+        console.log(url)
+        console.log(user_id,friend_id)
+        if(user_id!=null && friend_id!=null){
+            console.log("----------")
+            OpenInNewTab(url)
+        }
+        function OpenInNewTab(url) {
+            var newTab = window.open(url, '_blank');
+            newTab.location;
+        }
+
+    })
     
+
+
+
+    add_friend_button.addEventListener("click",()=>{
+        if(add_friend_box.style.display=="none"){
+            add_friend_box.style.display="flex"
+            client_list_box.style.display="none"
+        }else{
+            add_friend_box.style.display="none"
+            client_list_box.style.display="block"
+        }
+    })
+    go_to_chat_room_list_button.addEventListener("click",()=>{
+        console.log(client_list_box.style.display)
+        if(client_list_box.style.display=="block" || client_list_box.style.display==""){
+            add_friend_box.style.display="flex"
+            client_list_box.style.display="none"
+        }else{
+            add_friend_box.style.display="none"
+            client_list_box.style.display="block"
+        }
+    })
+
 
 
     pending_selector.addEventListener("click",()=>{
@@ -186,6 +262,7 @@ async function update_member_process_status(client_id,new_status){
     let fd = new FormData()
     fd.append("process_status",new_status)
     fd.append("client_id",client_id)
+    fd.append("user_id",send_chat_information_form.getAttribute("user_id"))
     let update_message = await fetch("/users/api/update_member_process_status",{
         method:"put",
         body:fd
@@ -195,7 +272,7 @@ async function update_member_process_status(client_id,new_status){
 
 
 // 產生單一 client 狀態
-function generate_one_client_chat_room_selector(client_id, client_name, client_chat_status, client_latest_message_time,process_status) {
+function generate_one_client_chat_room_selector(client_id, client_name, client_chat_status, client_latest_message_time,process_status,read_message_id,unread_message_id) {
     let one_client_chat_room_selector = document.createElement("div")
     let one_client_chat_room_selector_id = "one_client_chat_room_selector"+String(client_id)
     one_client_chat_room_selector.setAttribute("name",client_name)
@@ -206,6 +283,10 @@ function generate_one_client_chat_room_selector(client_id, client_name, client_c
     one_client_chat_room_selector.addEventListener("click",()=>{
         console.log(client_id)
         generate_info_of_users_chat_room_box(client_id,client_name)
+        update_read_message_id(client_id,read_message_id,unread_message_id)
+        renew_chat_room_background_color(one_client_chat_room_selector)
+        console.log("-------------------")
+        // one_client_chat_room_selector.setAttribute("class","one_client_chat_room_selector_focus")
         one_client_chat_room_selector_chat_status.style.display="none"
     })
     let one_client_chat_room_selector_name = document.createElement("div")
@@ -247,6 +328,31 @@ function generate_one_client_chat_room_selector(client_id, client_name, client_c
     one_client_chat_room_selector_date_and_status.appendChild(one_client_chat_room_selector_chat_status)
 }
 
+function renew_chat_room_background_color(one_client_chat_room_selector){
+    let array_list = document.querySelectorAll(".one_client_chat_room_selector_focus")
+    console.log(array_list)
+    for(let i=0;i<array_list.length;i++){
+        console.log(i)
+        array_list[i].setAttribute("class","one_client_chat_room_selector")
+    }
+    one_client_chat_room_selector.setAttribute("class","one_client_chat_room_selector_focus")
+}
+
+function update_read_message_id(client_id,read_message_id,unread_message_id){
+    if(unread_message_id>read_message_id){
+        let user_id = send_chat_information_form.getAttribute("user_id")
+        let fd =new FormData()
+        fd.append("client_id",client_id)
+        fd.append("user_id",user_id)
+        fd.append("unread_message_id",unread_message_id)
+        let url = "/users/api/update_read_message_id_in_status_list"
+        fetch(url,{
+            method:"put",
+            body:fd
+        }).then((res)=>{res.json()}).then(data=>{console.log(data)})
+    }
+}
+
 // 用選定的client 取得歷史訊息，並生成歷史對話紀錄
 async function generate_info_of_users_chat_room_box(client_id,client_name) {
     let client_name_box = document.querySelector(".client_name_box")
@@ -255,7 +361,7 @@ async function generate_info_of_users_chat_room_box(client_id,client_name) {
     let user_id = send_chat_information_form.getAttribute("user_id")
     let focos_cliene_id =send_chat_information_form.getAttribute("client_id")  
     users_chat_room_box_content.textContent=".....loading"
-    url = "/users/api/client/chat_message?member_id="+String(focos_cliene_id)
+    url = "/users/api/client/chat_message?member_id="+String(focos_cliene_id)+"&user_id="+String(user_id)
     let message1 = await fetch(url, { method: "get" }).then(res => res.json()).then((data) => { return data })
     users_chat_room_box_content.textContent=""
     for(let i=0;i<message1.message.length;i++){
@@ -329,34 +435,64 @@ function websocker(){
     })
     send_chat_information_form.addEventListener("submit",async function(e){
         e.preventDefault()
-        send_message_to_socket_server_and_upload_to_db(socket)
+        let user_id = send_chat_information_form.getAttribute("user_id")
+        let focos_cliene_id =send_chat_information_form.getAttribute("client_id")  
+        let message_text = chat_bar_input.value
+        if(message_text!=""){
+            send_message_to_socket_server_and_upload_to_db(socket,user_id,focos_cliene_id,message_text)
+        }
         await sleep(100)
         refresh_chat_room_selector_list()
         console.log("傳訊息,刷新")
     })
+
+
+
+    add_friend_form.addEventListener("submit",async function(e){
+        e.preventDefault()
+        let add_friend_result = document.getElementById("add_friend_result")
+        let add_friend_id_input = document.getElementById("add_friend_id_input")
+        let friend_id =add_friend_id_input.value
+        let url = "/users/api/search_member_id_exit/?member_id="+String(friend_id)
+        add_friend_id_input.value=""
+        console.log(url)
+        let res1 = await fetch(url,{
+            method:"get"
+        }).then((res)=>res.json())
+        .then(async (data)=>{
+            console.log(data)
+            if(data.message.length==0){
+                add_friend_result.style.display="block"
+                add_friend_result.textContent="查無此人"
+            }else{
+                add_friend_result.style.display="block"
+                add_friend_result.textContent="好友 "+data.message[0].name +" 新增成功"
+                let user_id = send_chat_information_form.getAttribute("user_id")
+                let focos_cliene_id =friend_id 
+                let message_text = "哈囉 ~ ~"
+                send_message_to_socket_server_and_upload_to_db(socket,user_id,focos_cliene_id,message_text)
+                await sleep(100)
+                refresh_chat_room_selector_list()
+                console.log("新增好友成功")
+            }
+        
+        })
+    })
 }
 
 // 使用 socket 傳送聊天內容，並更新db中的聊天歷史紀錄
-function send_message_to_socket_server_and_upload_to_db(socket){
-    let user_id = send_chat_information_form.getAttribute("user_id")
-    let focos_cliene_id =send_chat_information_form.getAttribute("client_id")  
-    let message_text = chat_bar_input.value
+function send_message_to_socket_server_and_upload_to_db(socket,user_id,focos_cliene_id,message_text){
     if(focos_cliene_id == undefined){
         console.log(focos_cliene_id)
     }else{
-        if(message_text != ""){
-            console.log("get_id",focos_cliene_id)
-            console.log("send_id",user_id)
-            let message = {get_id :focos_cliene_id ,send_id : user_id,chat_information:message_text}
-            socket.emit("chat message",message)
-            chat_bar_input.value=""
-            let fd = new FormData()
-            fd.append("get_id",focos_cliene_id)
-            fd.append("information",message_text)
-            fetch("/api/chat_message",{method:"post",body:fd}).then((res)=>res.json()).then((data)=>{console.log(data)}).catch(err=>console.log(err))
-        }            
+        let message = {get_id :focos_cliene_id ,send_id : user_id,chat_information:message_text}
+        socket.emit("chat message",message)
+        chat_bar_input.value=""
+        let fd = new FormData()
+        fd.append("get_id",focos_cliene_id)
+        fd.append("information",message_text)
+        fetch("/api/chat_message",{method:"post",body:fd}).then((res)=>res.json()).then((data)=>{console.log(data)}).catch(err=>console.log(err))
     }
-
 }
 
 // 等待 db 更新

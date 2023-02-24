@@ -14,9 +14,23 @@
     <script src="http://localhost:3000/socket.io/socket.io.js"></script>
     <div class="chat_page_layout">
         <div class="function_selector_box">
-            <img class="chat_room_selector_init" src="/images/char_room_init.png" height="50" width="50">
+            <img class="chat_room_selector_init" id="go_to_chat_room_list_button" src="/images/char_room_init.png" height="50" width="50">
+            <img class="chat_room_selector_init" id="add_friend_button" src="/images/add_friend-64.png" height="45" width="45">
         </div>
-        <div class="client_list_box">
+        <div class="add_friend_box" style="display: none;">
+            <div>
+                <form id="add_friend_form" action="">
+                    <div class="add_friend_form_title" style="text-align: center;">請輸入好友 ID :</div>
+                    <div>
+                        <input type="text" placeholder="這邊輸入id" id="add_friend_id_input" class="add_friend_id_input">
+                        <input type="submit" placeholder="這邊輸入id" id="add_friend_submit_button" class="add_friend_submit_button">
+                    </div>
+                    <div id="add_friend_result" class="add_friend_result" style="text-align: center;"></div>
+                </form>
+            </div>
+        </div>
+
+        <div class="client_list_box">            
             <div class="top_bar">
                 <ul class="drop-down-menu">
 	                <li><a id="filter_show_text" href="#">全部</a>
@@ -31,8 +45,8 @@
 	            </ul>
                 <input type="text" id="selector_list_search" placeholder="搜尋" class="client_search_input">
             </div>
-            <div class="client_selector_list">
-            </div>
+            <div class="client_selector_list"></div>
+            
         </div>
         <div class="users_chat_room_box">
             <div class="users_chat_room_box_top_bar">
@@ -48,7 +62,7 @@
             </div>
 
             <div class="users_chat_room_box_mid_bar">
-                <div class="chat_phone"><img src="/images/chat_phone.png" height="25" width="25"></div>
+                <div class="chat_phone"><img id="phone_call_button" src="/images/chat_phone.png" height="25" width="25"></div>
             </div>
             <div class="users_chat_room_box_form">
                 <form id="form" action="">

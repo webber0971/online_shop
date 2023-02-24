@@ -41,6 +41,47 @@ router.get('/users_chat_page', function (req, res, next) {
 });
 
 
+///////////////////////
+///////////////////////
+/////////////////////
+////////////////////
+router.get("/rooms/new",upload.array(),(req,res)=>{
+  let rawurl = req.url
+  let parserUrl = url.parse(rawurl)
+  let parsedQs = querystring.parse(parserUrl.query)
+  let user_id = "5l"
+  let friend_id = "777"
+  let room_name=""
+  console.log(parsedQs)
+  if ("user_id" in parsedQs) {
+    user_id = parsedQs.user_id
+  }
+  if ("friend_id" in parsedQs) {
+    friend_id = parsedQs.friend_id
+  }
+  if(parseInt(user_id)<parseInt(friend_id)){
+    room_name = user_id+"&"+friend_id
+  }else{
+    room_name = friend_id+"&"+user_id
+  }
+  console.log("room_name",room_name)
+  console.log("user_id:",user_id)
+  console.log("friend_id:",friend_id)
+  
+  // res.redirect(`/users/video_room/${room_name}`)
+  res.redirect(`http://localhost:3000/video_room/${room_name}`)
+})
+
+// router.get("/video_room/:room",(req,res)=>{
+//   console.log("===========",req.params.room)
+//   res.render("video_room",{layout:false,room_id:req.params.room})
+// })
+/////////////////
+//////////////////////
+////////////////
+//////////////////
+
+
 
 router.get("/api/requestUploadToS3", (req, res) => {
   const AWS = require('aws-sdk/');
@@ -174,6 +215,7 @@ router.get("/api/client_send_message_array",upload.array(), (req, res) => {
     let client_chat_order_array = []
     for (i = 0; i < get_client_send_message_array.length; i++) {
       let client_id = 0
+      let chat_status
       if (get_client_send_message_array[i].get_id == user_id) {
         client_id = get_client_send_message_array[i].send_id
       }else if(get_client_send_message_array[i].send_id == user_id){
@@ -236,6 +278,26 @@ router.get("/api/get_all_member_information_about_chat_status",(req,res)=>{
     res.json({ message: get_chat_message_by_member_id })
   }
 })
+/////////////////////////////////下面未完成
+// 
+router.get("/api/get_all_friends_status_list_by_member_id",upload.array(),(req,res)=>{
+  let rawurl = req.url
+  let parserUrl = url.parse(rawurl)
+  let parsedQs = querystring.parse(parserUrl.query)
+  let user_id = ""
+  if ("user_id" in parsedQs) {
+    user_id = parsedQs.user_id
+  } else {
+    res.json({ error: true })
+  }
+  console.log("lelelelel",user_id)
+  user_get_all_firends_status_1(connection_pool,user_id,res)
+  async function user_get_all_firends_status_1(connection_pool,user_id,res) {
+    let friends_status = await connect_to_database.user_get_all_firends_status(connection_pool,user_id)
+    // console.log(get_chat_message_by_member_id)
+    res.json({ message: friends_status })
+  }
+})
 
 //////////////////
 router.put("/api/update_member_chat_status",upload.array(),(req,res)=>{
@@ -257,12 +319,20 @@ router.get("/api/client/chat_message", (req, res) => {
   let parserUrl = url.parse(rawurl)
   let parsedQs = querystring.parse(parserUrl.query)
   let member_id = ""
+  let user_id= ""
   if ("member_id" in parsedQs) {
     member_id = parsedQs.member_id
   } else {
     res.json({ error: true })
   }
-  get_id=1
+  if ("user_id" in parsedQs) {
+    user_id = parsedQs.user_id
+  } else {
+    res.json({ error: true })
+  }
+  get_id=user_id
+  console.log(member_id)
+  console.log(get_id)
   client_get_chat_message(connection_pool, member_id, get_id)
   async function client_get_chat_message(connection_pool, member_id, get_id) {
     let get_chat_message = await connect_to_database.get_chat_message(connection_pool, member_id, get_id)
@@ -279,19 +349,46 @@ router.get("/api/client/chat_message", (req, res) => {
 
 router.put("/api/update_member_process_status",upload.array(),(req,res)=>{
   let client_id = req.body["client_id"]
+  let user_id = req.body["user_id"]
   let process_status =  req.body["process_status"]
-
-  update_member_process_status1(connection_pool, client_id, process_status)
-
-  async function update_member_process_status1(connection_pool, client_id, process_status) {
-    let update_member_chat_status =await connect_to_database.update_member_process_status(connection_pool, client_id,process_status)
-    console.log(update_member_chat_status)
-    res.statusCode = 200
-    res.json({ message: update_member_chat_status })
+  update_member_process_status1(connection_pool, client_id,user_id, process_status)
+  async function update_member_process_status1(connection_pool, client_id,user_id, process_status) {
+    let update_member_chat_status2 = await connect_to_database.update_status_list_process_status(connection_pool,client_id,user_id,process_status)
+    res.json({ message: update_member_chat_status2 })
   }
 
 })
 
+
+router.put("/api/update_read_message_id_in_status_list",upload.array(),(req,res)=>{
+  let client_id = req.body["client_id"]
+  let user_id = req.body["user_id"]
+  let unread_message_id =  req.body["unread_message_id"]
+  update_read_message_id_in_status_list_1(connection_pool, client_id,user_id, unread_message_id)
+  async function update_read_message_id_in_status_list_1(connection_pool, client_id,user_id, unread_message_id) {
+    let update_read_message_id_in_status_list_2 = await connect_to_database.update_read_message_id_in_status_list(connection_pool,client_id,user_id,unread_message_id)
+    res.json({ message: update_read_message_id_in_status_list_2 })
+  }
+})
+
+
+router.get("/api/search_member_id_exit", (req, res) => {
+  let rawurl = req.url
+  let parserUrl = url.parse(rawurl)
+  let parsedQs = querystring.parse(parserUrl.query)
+  let member_id = ""
+  if ("member_id" in parsedQs) {
+    member_id = parsedQs.member_id
+  } else {
+    res.json({ error: true })
+  }  
+  search_member_by_member_id(connection_pool, member_id)
+  async function search_member_by_member_id(connection_pool, member_id) {
+    let search_member_by_member_id_1 =await connect_to_database.check_member_id_exited(connection_pool, member_id)
+    console.log(search_member_by_member_id_1)
+    res.json({ message: search_member_by_member_id_1 })
+  }
+})
 
 
 

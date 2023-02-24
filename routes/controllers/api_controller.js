@@ -306,6 +306,7 @@ module.exports = (router, upload, connect_to_database, connection_pool, appCache
     })
   })
   // 記錄新的聊天訊息
+  const moment = require("moment") // 將 javascript 時間改成 mysql datatime 格式
   router.post("/api/chat_message", upload.array(), (request, response) => {
     let temp_token = request.cookies.access_token
     jwt.verify(temp_token, jwt_secretkey, (err, payload) => {
@@ -315,8 +316,8 @@ module.exports = (router, upload, connect_to_database, connection_pool, appCache
           "message": "token無效，解開jwt失敗"
         })
       } else {
-        let date = new Date()
-        let local_date = date.toLocaleDateString().replaceAll("/","-")
+        let local_date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+        console.log("時間 : ",local_date)
         console.log(local_date)
         let send_id = payload.member_id
         let get_id = request.body["get_id"] //admin = 1
@@ -327,8 +328,9 @@ module.exports = (router, upload, connect_to_database, connection_pool, appCache
           if(get_id == 1 ){
             let member_chat_status = "未讀"
             let update_member_chat_status = await connect_to_database.update_member_chat_status(connection_pool, send_id,member_chat_status)
-            console.log(update_member_chat_status)
           }
+          console.log(insert_chat_message.insertId)
+          console.log("333_insert_chat_message")
           response.statusCode = 200
           response.json({ message: insert_chat_message })
         }

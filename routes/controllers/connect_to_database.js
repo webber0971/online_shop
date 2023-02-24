@@ -93,6 +93,31 @@ function get_member_info_by_member_id(connection_pool,member_id){
     })
 }
 
+// check member_id exited
+function check_member_id_exited(connection_pool,member_id){
+    return new Promise((resolve,reject)=>{
+        connection_pool.getConnection((err,connection)=>{
+            if(err){
+                console.log("連線失敗")
+                reject("連線失敗")
+            }else{
+                sql = "select name from member where member_id = (?)"
+                val = member_id
+                connection.query(sql,[val],(err,res)=>{
+                    connection.release()
+                    if(err){
+                        reject("sql錯誤")
+                    }else{
+                        resolve(res)
+                    }
+                })
+            }
+        })
+    })
+}
+
+
+
 function get_all_member_chat_info(connection_pool){
     return new Promise((resolve,reject)=>{
         connection_pool.getConnection((err,connection)=>{
@@ -484,7 +509,7 @@ function get_all_chat_message_by_user_id(connection_pool,user_id){
 
 
 
-
+// 紀錄聊天內容，並在第一次聊天時 插入 status_list 紀錄狀態
 function insert_chat_message(connection_pool,send_id,get_id,information,local_date){
     return new Promise((resolve,reject)=>{
         connection_pool.getConnection((err,connection)=>{
@@ -495,11 +520,61 @@ function insert_chat_message(connection_pool,send_id,get_id,information,local_da
                 sql = "insert into chat_message(send_id,get_id,information,date) values (?)"
                 val = [send_id,get_id,information,local_date]
                 connection.query(sql,[val],(err,res)=>{
-                    connection.release()
                     if(err){
+                        connection.release()
                         reject("sql錯誤")
                     }else{
                         console.log("存入db")
+                        message_id =String(res.insertId)
+                        send_id = String(send_id)
+                        get_id = String(get_id)
+                        local_date = String(local_date)
+
+                        sql="update status_list set unread_message_id = (?),latest_time = (?) where send_id = (?) and get_id = (?)"
+                        val = [message_id,local_date,send_id,get_id]
+                        let status_1 = connection.query(sql,val,(err,res)=>{
+                            if(err){
+                                return err
+                            }else{
+                                if(res.affectedRows == 0){
+                                    console.log("eeooeoe")
+                                    sql = "insert into status_list(send_id,get_id,unread_message_id,latest_time) values (?)"
+                                    val = [send_id,get_id,message_id,local_date]
+                                    connection.query(sql,[val],(err,res)=>{
+                                        if(err){
+                                            console.log(err)
+                                            return err
+                                        }else{
+                                            return res
+                                        }
+                                    })
+                                }
+                                return res
+                            }
+                        })
+                        sql="update status_list set read_message_id = (?),latest_time = (?) where send_id = (?) and get_id = (?)"
+                        val = [message_id,local_date,get_id,send_id]
+                        let status_2 = connection.query(sql,val,(err,res)=>{
+                            if(err){
+                                return err
+                            }else{
+                                if(res.affectedRows == 0){
+                                    console.log("eeooeoe")
+                                    sql = "insert into status_list(send_id,get_id,read_message_id,latest_time) values (?)"
+                                    val = [get_id,send_id,message_id,local_date]
+                                    connection.query(sql,[val],(err,res)=>{
+                                        if(err){
+                                            console.log(err)
+                                            return err
+                                        }else{
+                                            return res
+                                        }
+                                    })
+                                }
+                                return res
+                            }
+                        })
+                        connection.release()
                         resolve(res)
                     }
                 })
@@ -601,7 +676,80 @@ function update_member_process_status(connection_pool,client_id,process_status){
     })
 }
 
+// update_status_list_process_status
 
+function update_status_list_process_status(connection_pool,friend_id,user_id,process_status){
+    return new Promise((resolve,reject)=>{
+        connection_pool.getConnection((err,connection)=>{
+            if(err){
+                console.log("連線失敗")
+                reject("連線失敗")
+            }else{
+                sql = "update status_list set process_status = (?) where get_id = (?) and send_id = (?)"
+                val = [process_status,user_id,friend_id]
+                connection.query(sql,val,(err,res)=>{
+                    connection.release()
+                    if(err){
+                        reject("sql錯誤")
+                    }else{
+                        resolve(res)
+                    }
+                })
+            }
+        })
+    })
+}
+
+
+
+
+
+function user_get_all_firends_status(connection_pool,user_id){
+    return new Promise((resolve,reject)=>{
+        connection_pool.getConnection((err,connection)=>{
+            if(err){
+                console.log("連線失敗")
+                reject("連線失敗")
+            }else{
+                sql = "select send_id,get_id,read_message_id,unread_message_id,status_list.process_status,latest_time,name from status_list inner join member on status_list.send_id = member.member_id where status_list.get_id = (?) order by status_list.latest_time desc"
+                val = user_id
+                connection.query(sql,[val],(err,res)=>{
+                    connection.release()
+                    if(err){
+                        console.log(err)
+                        reject("sql錯誤")
+                    }else{
+                        console.log(res)
+                        resolve(res)
+                    }
+                })
+            }
+        })
+    })
+}
+
+
+function update_read_message_id_in_status_list(connection_pool,friend_id,user_id,unread_message_id){
+    return new Promise((resolve,reject)=>{
+        connection_pool.getConnection((err,connection)=>{
+            if(err){
+                console.log("連線失敗")
+                reject("連線失敗")
+            }else{
+                sql = "update status_list set read_message_id = (?) where get_id = (?) and send_id = (?)"
+                val = [unread_message_id,user_id,friend_id]
+                connection.query(sql,val,(err,res)=>{
+                    connection.release()
+                    if(err){
+                        reject("sql錯誤")
+                    }else{
+                        resolve(res)
+                    }
+                })
+            }
+        })
+    })
+}
 
 
 
@@ -634,3 +782,7 @@ module.exports.get_all_member_chat_info=get_all_member_chat_info
 module.exports.update_member_chat_status=update_member_chat_status
 module.exports.update_member_process_status=update_member_process_status
 module.exports.get_all_chat_message_by_user_id=get_all_chat_message_by_user_id
+module.exports.update_status_list_process_status=update_status_list_process_status
+module.exports.user_get_all_firends_status=user_get_all_firends_status
+module.exports.update_read_message_id_in_status_list=update_read_message_id_in_status_list
+module.exports.check_member_id_exited=check_member_id_exited
