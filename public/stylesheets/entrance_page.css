@@ -1,0 +1,92 @@
+.entrance_button_layout{
+    height: 400px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    column-gap:3%;
+    row-gap: 3%;
+    margin-top: 50px;
+}
+.entrance_button_layout div{
+    background-color:rgb(254, 237, 217);
+    border-radius: 50px;
+    cursor: pointer;
+}
+.home_page{
+    padding: 10px;
+}
+.user_page{
+    padding: 10px;
+}
+.chat_room_entrance{
+    padding: 10px;
+}
+.video_chat_entrance{
+    padding: 10px;
+}
+.home_page_image{
+    margin-top: 20px;
+    background-image: url(/images/online-shop.png);
+    height: 70%;
+    width: 100%;
+    background-color: aqua;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    background-repeat:no-repeat;
+    background-size: contain;
+}
+.home_page_text{
+    text-align: center;
+}
+
+
+.user_page_image{
+    margin-top: 20px;
+    background-image: url(/images/data-analysis.png);
+    height: 70%;
+    width: 100%;
+    background-color: aqua;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    background-repeat:no-repeat;
+    background-size: contain;
+}
+.user_page_text{
+    text-align: center;
+}
+
+
+.chat_room_image{
+    margin-top: 20px;
+    background-image: url(/images/group-chat.png);
+    height: 70%;
+    width: 100%;
+    background-color: aqua;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    background-repeat:no-repeat;
+    background-size: contain;
+}
+.chat_room_text{
+    text-align: center;
+}
+
+
+.video_chat_image{
+    margin-top: 20px;
+    background-image: url(/images/video-call.png);
+    height: 70%;
+    width: 100%;
+    background-color: aqua;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    background-repeat:no-repeat;
+    background-size: contain;
+}
+.video_chat_text{
+    text-align: center;
+}

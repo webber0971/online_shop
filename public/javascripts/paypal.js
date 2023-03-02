@@ -157,7 +157,7 @@ TPDirect.card.onUpdate(function (update) {
         setNumberFormGroupToNormal('.ccv-group')
     }
 })
-$('form').on('submit', function (event) {
+$('#send_order_to_paypal').on('submit', function (event) {
     event.preventDefault()
 
     console.log(TPDirect.card)
@@ -230,10 +230,11 @@ $('form').on('submit', function (event) {
                 if(data["payment"]["status"]==0){
                     console.log(data.payment.bill_number)
                     somethingFadeout(0,3,loadingWrapper)
-                    //頁面內容更新
-                    cart_init()
-                    //layout 更新
-                    get_order_list_number_in_cart()
+                    // //頁面內容更新
+                    // cart_init()
+                    // //layout 更新
+                    // get_order_list_number_in_cart()
+                    location=location
 
                     // url="/thankyou?number="+data["data"]["number"]
                     // location.href=url                            

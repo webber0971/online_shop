@@ -11,7 +11,7 @@ const e = require('express');
 
 
 // const jwt_secretkey = process.env.JWT_SECURITYKEY
-const appCache = new nodecache();  // const appCache = new nodecache({ stdTTL : 3599}); stdTTL 為快取存在時間，單位為秒
+// const appCache = new nodecache();  // const appCache = new nodecache({ stdTTL : 3599}); stdTTL 為快取存在時間，單位為秒
 const connection_pool = mysql.createPool({
   connectionLimit: 10,
   host: process.env.RDS_HOST,
@@ -68,18 +68,30 @@ router.get("/rooms/new",upload.array(),(req,res)=>{
   console.log("user_id:",user_id)
   console.log("friend_id:",friend_id)
   
-  // res.redirect(`/users/video_room/${room_name}`)
-  res.redirect(`http://localhost:3000/video_room/${room_name}`)
+  res.redirect(`/users/video_room/${room_name}`)
+  // res.redirect(`http://localhost:3000/video_room/${room_name}`)
 })
 
-// router.get("/video_room/:room",(req,res)=>{
-//   console.log("===========",req.params.room)
-//   res.render("video_room",{layout:false,room_id:req.params.room})
-// })
+router.get("/video_room/:room",(req,res)=>{
+  console.log("===========",req.params.room)
+  res.render("video_room",{layout:false,ROOM_ID:req.params.room})
+})
 /////////////////
 //////////////////////
 ////////////////
 //////////////////
+
+
+
+
+
+
+
+//////////////
+//////////
+/////////////////
+///////////
+////////////////
 
 
 
@@ -108,30 +120,30 @@ router.get("/api/requestUploadToS3", (req, res) => {
 })
 
 
-router.post("/api/products", upload.array(), (req, res) => {
-  let image_url = req.body["image_url"]
-  let product_name = req.body["product_name"]
-  let product_price = req.body["product_price"]
-  let product_status = req.body["product_status"]
-  console.log(image_url)
-  insert_new_product(connection_pool, image_url, product_name, product_price, product_status)
-  async function insert_new_product(connection_pool, image_url, product_name, product_price, product_status) {
-    let insert_new_product = await connect_to_database.insert_new_product(connection_pool, image_url, product_name, product_price, product_status)
-    res.json({ message: insert_new_product })
-  }
-})
+// router.post("/api/products", upload.array(), (req, res) => {
+//   let image_url = req.body["image_url"]
+//   let product_name = req.body["product_name"]
+//   let product_price = req.body["product_price"]
+//   let product_status = req.body["product_status"]
+//   console.log(image_url)
+//   insert_new_product(connection_pool, image_url, product_name, product_price, product_status)
+//   async function insert_new_product(connection_pool, image_url, product_name, product_price, product_status) {
+//     let insert_new_product = await connect_to_database.insert_new_product(connection_pool, image_url, product_name, product_price, product_status)
+//     res.json({ message: insert_new_product })
+//   }
+// })
 
 
 
-router.put("/api/products", upload.array(), (req, res) => {
-  let product_id = req.body["update_product_id"]
-  let product_status = req.body["update_product_status"]
-  update_product_status(connection_pool, product_id, product_status)
-  async function update_product_status(connection_pool, product_id, product_status) {
-    let update_product_status = await connect_to_database.update_product_status(connection_pool, product_id, product_status)
-    res.json({ message: update_product_status })
-  }
-})
+// router.put("/api/products", upload.array(), (req, res) => {
+//   let product_id = req.body["update_product_id"]
+//   let product_status = req.body["update_product_status"]
+//   update_product_status(connection_pool, product_id, product_status)
+//   async function update_product_status(connection_pool, product_id, product_status) {
+//     let update_product_status = await connect_to_database.update_product_status(connection_pool, product_id, product_status)
+//     res.json({ message: update_product_status })
+//   }
+// })
 
 router.put("/api/bill", upload.array(), (req, res) => {
   let bill_number = req.body["bill_number"]

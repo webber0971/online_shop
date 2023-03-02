@@ -9,6 +9,8 @@ history_order_list_selector.setAttribute("class","history_order_list_selector")
 history_order_list_selector.textContent="歷史清單"
 let box = document.createElement("div")
 
+let all_price = 0
+
 cart_page_selector.appendChild(unpay_list_selector)
 cart_page_selector.appendChild(history_order_list_selector)
 cart_page_selector.appendChild(box)
@@ -36,6 +38,9 @@ async function cart_init(){
         console.log("沒有訂單")
     }
     add_listener()
+    console.log("--------",all_price)
+    let allPriceText = document.getElementById("allPriceText")
+    allPriceText.textContent = all_price
 }
 
 
@@ -123,6 +128,7 @@ function cart_generate_list_all(order_list){
     let card_count = 0
     for(let i=0;i<order_list.message.length;i++){
         if(order_list.message[i].bill_number == "0"){
+            all_price = all_price + order_list.message[i].price*order_list.message[i].quantity
             card_count++
             let order_list_input_information= document.getElementById("order_list_input_information")
             order_list_input_information.style.display="block"
@@ -168,7 +174,17 @@ function cart_generate_list_all(order_list){
             cart_operate.setAttribute("class","cart_operate")
             let order_list_delete = document.createElement("div")
             order_list_delete.setAttribute("class","order_list_delete")
+            order_list_delete.setAttribute("order_id",order_list.message[i].order_list_id)
             order_list_delete.textContent="刪除"
+            order_list_delete.addEventListener("click",async ()=>{
+                console.log("按下刪除，order_list_id = ",order_list.message[i].order_list_id)
+                let fd = new FormData()
+                fd.append("order_list_id",order_list.message[i].order_list_id)
+                let delete_rel = await fetch("/api/orders",{
+                    method:"delete",
+                    body:fd
+                }).then(res=>res.json()).then((data)=>{location=location})
+            })
             list.appendChild(cart_card)   
             cart_card.appendChild(card_title)
             cart_card.appendChild(card_content)

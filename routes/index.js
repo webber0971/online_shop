@@ -42,7 +42,7 @@ router.use(expressJwt({
       return null
     }
   }
-}).unless({ path: ["/users/api/requestUploadToS3", "/paypal", "/api/member", "/", "/test/cookie", "/api/selling_products_info", "/auth/google", "/auth/google/callback", "/success", "/auth/facebook", "/cart"] }))
+}).unless({ path: ["/entrance","/users/api/requestUploadToS3", "/paypal", "/api/member", "/", "/test/cookie", "/api/selling_products_info", "/auth/google", "/auth/google/callback", "/success", "/auth/facebook", "/cart"] }))
 // .unless({用正则指定不需要访问权限的路径}) 
 
 const html_controller = require("./controllers/html_controller")

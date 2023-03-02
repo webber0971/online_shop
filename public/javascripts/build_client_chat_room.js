@@ -75,7 +75,8 @@ async function init_chat_room(client_id){
 
 
 function websocker(client_id){
-    let socket = io("http://localhost:3000/")
+    // let socket = io("https://onlineshop.foodpass.club/",{path:"socket",transports:["websocket"]})
+    let socket = io("https://onlineshop.foodpass.club/")
 
     socket.emit("enter_room",client_id)
 

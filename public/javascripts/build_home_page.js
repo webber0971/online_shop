@@ -7,6 +7,7 @@ build_project_card_process()
 async function build_project_card_process(){
     let all_products_information =await get_projects_info()
     all_products_information=all_products_information.info
+    console.log(all_products_information)
     build_project_card(all_products_information)
 }
 

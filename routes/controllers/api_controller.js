@@ -1,3 +1,5 @@
+const { request, response } = require('express')
+
 module.exports = (router, upload, connect_to_database, connection_pool, appCache, jwt, jwt_secretkey, url, querystring) => {
   /////// member api
   // build a new account
@@ -227,6 +229,30 @@ module.exports = (router, upload, connect_to_database, connection_pool, appCache
       }
     }
   })
+  
+  // delete order_list by order_list_id
+  router.delete("/api/orders",upload.array(),(request,response)=>{
+    let temp_token = request.cookies.access_token
+    jwt.verify(temp_token, jwt_secretkey, (err, payload) => {
+      if (err) {
+        response.json({
+          error: true,
+          "message": "token無效，解開jwt失敗"
+        })
+      } else {
+        let member_id = payload.member_id
+        let order_list_id = request.body["order_list_id"]
+        delete_order_list_by_order_list_id(connection_pool,order_list_id, response)
+        async function delete_order_list_by_order_list_id(connection_pool, order_list_id, response) {
+          let delete_order_list = await connect_to_database.delete_order_list_by_order_list_id(connection_pool,order_list_id)
+          response.statusCode = 200
+          response.json({ message: delete_order_list })
+        }
+      }
+    })
+
+  })
+
 
 
   ////// cart api
@@ -337,4 +363,37 @@ module.exports = (router, upload, connect_to_database, connection_pool, appCache
       }
     })
   })
+
+
+  router.put("/api/products", upload.array(), (req, res) => {
+    let product_id = req.body["update_product_id"]
+    let product_status = req.body["update_product_status"]
+    console.log(appCache)
+    console.log("------------------========================")
+    update_product_status(connection_pool, product_id, product_status)
+    async function update_product_status(connection_pool, product_id, product_status) {
+      let update_product_status = await connect_to_database.update_product_status(connection_pool, product_id, product_status)
+      let all_products_information = await connect_to_database.get_products_information_their_status_is_selling(connection_pool)
+      console.log("取得商品訊息")
+      appCache.set("selling_products_info", all_products_information)
+      res.json({ message: update_product_status })
+    }
+  })
+
+  router.post("/api/products", upload.array(), (req, res) => {
+    let image_url = req.body["image_url"]
+    let product_name = req.body["product_name"]
+    let product_price = req.body["product_price"]
+    let product_status = req.body["product_status"]
+    console.log(image_url)
+    insert_new_product(connection_pool, image_url, product_name, product_price, product_status)
+    async function insert_new_product(connection_pool, image_url, product_name, product_price, product_status) {
+      let insert_new_product = await connect_to_database.insert_new_product(connection_pool, image_url, product_name, product_price, product_status)
+      let all_products_information = await connect_to_database.get_products_information_their_status_is_selling(connection_pool)
+      console.log("取得商品訊息")
+      appCache.set("selling_products_info", all_products_information)
+      res.json({ message: insert_new_product })
+    }
+  })
+
 }

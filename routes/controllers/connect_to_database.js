@@ -218,6 +218,30 @@ function upload_order_list(connection_pool,member_id,product_id,quantity,bill_nu
     })
 }
 
+// delete order_list by order_list_id
+function delete_order_list_by_order_list_id(connection_pool,order_list_id){
+    return new Promise((resolve,reject)=>{
+        connection_pool.getConnection((err,connection)=>{
+            if(err){
+                console.log("連線失敗")
+                reject("連線失敗")
+            }else{
+                sql = "delete from order_list where order_list_id = (?)"
+                bill_number=0
+                val = [order_list_id]
+                connection.query(sql,[val],(err,res)=>{
+                    connection.release()
+                    if(err){
+                        reject("sql錯誤")
+                    }else{
+                        resolve(res)
+                    }
+                })
+            }
+        })
+    })
+}
+
 // get all order_list by member_id
 function get_order_list_with_memeber_id(connection_pool,member_id){
     return new Promise((resolve,reject)=>{
@@ -786,3 +810,4 @@ module.exports.update_status_list_process_status=update_status_list_process_stat
 module.exports.user_get_all_firends_status=user_get_all_firends_status
 module.exports.update_read_message_id_in_status_list=update_read_message_id_in_status_list
 module.exports.check_member_id_exited=check_member_id_exited
+module.exports.delete_order_list_by_order_list_id=delete_order_list_by_order_list_id

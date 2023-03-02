@@ -4,10 +4,13 @@
     <title>{{title}}</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <link rel='stylesheet' href='/stylesheets/client_chat_room.css' />
+    <link rel='stylesheet' href='/stylesheets/entrance_page.css' />
   </head>
   <body>
     {{!-- 顧客聊天室按鈕 --}}
-    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    {{!-- <script src="http://test8812.foodpass.club/socket.io/socket.io.js"></script> --}}
+    {{!-- <script src="/socket.io/socket.io.js"></script> --}}
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
     <div class="client_connect_to_server"></div>
     <script src="/javascripts/build_client_chat_room.js"></script>
     <div id="backgroundFilter" class="backgroundFilter"></div>
@@ -52,5 +55,7 @@
         fjs.parentNode.insertBefore(js, fjs);
       }(document, 'script', 'facebook-jssdk'));
     </script>
+
+    <script src="/javascripts/entrance_page.js"></script>
   </body>
 </html>

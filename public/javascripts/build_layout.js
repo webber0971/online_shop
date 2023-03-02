@@ -9,6 +9,10 @@ let number_hint = document.createElement("span")
 number_hint.setAttribute("class","number_hint")
 number_hint.textContent=""
 
+let chat_room = document.createElement("li")
+chat_room.setAttribute("class","chat_room")
+chat_room.textContent="聊天室"
+
 let li_cart = document.createElement("li")
 li_cart.setAttribute("class","li_cart")
 li_cart.textContent="購物車"
@@ -31,6 +35,7 @@ li_logout.style.display="none"
 
 header_wrap.appendChild(h1)
 header_wrap.appendChild(ul)
+ul.appendChild(chat_room)
 ul.appendChild(li_cart)
 li_cart.appendChild(number_hint)
 ul.appendChild(li_register)
@@ -39,6 +44,7 @@ ul.appendChild(li_logout)
 
 go_to_cart_page()
 go_to_home_page()
+go_to_chat_room_page()
 function go_to_cart_page(){
     let li_cart = document.querySelector(".li_cart")
     li_cart.addEventListener("click",()=>{
@@ -50,6 +56,26 @@ function go_to_home_page(){
     let image_to_home_page = document.querySelector(".image_to_home_page")
     image_to_home_page.addEventListener("click",()=>{
         location = location.href="/" 
+    })
+}
+
+function go_to_chat_room_page(){
+    let go_to_chat_page = document.querySelector(".chat_room")
+    go_to_chat_page.addEventListener("click",()=>{
+        console.log("elle")
+        console.log("user_id = ",client_id)
+        if(client_id == undefined){
+            let login_page = document.querySelector(".login_page")
+            login_page.style.display="block"
+        }else{
+            let url = "/users/users_chat_page"
+            OpenInNewTab(url)
+            // location.href = "https://test8812.foodpass.club/users/users_chat_page"
+            function OpenInNewTab(url) {
+                var newTab = window.open(url, '_blank');
+                newTab.location;
+            }
+        }
     })
 }
 

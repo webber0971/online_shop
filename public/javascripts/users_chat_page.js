@@ -27,6 +27,8 @@ let client_selector_list = document.querySelector(".client_selector_list")
 let user_info = ""
 let is_init=true
 
+let socket = io("https://onlineshop.foodpass.club/")
+
 init()
 
 async function init() {
@@ -36,6 +38,7 @@ async function init() {
         return data })
     console.log(user_info)
     // 連上聊天室 server
+    refresh_chat_room_selector_list()
     websocker()
     add_some_button_listener()
 }
@@ -109,12 +112,11 @@ function add_some_button_listener(){
     });
 
 
-    phone_call_button.addEventListener("click",()=>{
-            // check_bll_list_page.style.display="block"
+    phone_call_button.addEventListener("click",async()=>{
+        // check_bll_list_page.style.display="block"
         let user_id = send_chat_information_form.getAttribute("user_id")
-        let friend_id = send_chat_information_form.getAttribute("client_id")    
-
-
+        let friend_id = send_chat_information_form.getAttribute("client_id")   
+        // 在訊息欄發出通話請求
         url = "/users/rooms/new/?user_id="+user_id+"&friend_id="+friend_id
         console.log(url)
         console.log(user_id,friend_id)
@@ -126,6 +128,12 @@ function add_some_button_listener(){
             var newTab = window.open(url, '_blank');
             newTab.location;
         }
+        // 在對話內容提送出發出通話請求訊息
+        let message_text = "發出通話請求"
+        send_message_to_socket_server_and_upload_to_db(socket,user_id,friend_id,message_text)
+        await sleep(100)
+        refresh_chat_room_selector_list()
+        console.log("發出通話請求")
 
     })
     
@@ -386,7 +394,8 @@ async function generate_info_of_users_chat_room_box(client_id,client_name) {
 
 // 使用 websocket 連上聊天專用server
 function websocker(){
-    let socket = io("http://localhost:3000/")
+    // let socket = io("http://localhost:3000/")
+    // let socket = io("https://onlineshop.foodpass.club/")
     let user_id = send_chat_information_form.getAttribute("user_id")
     socket.emit("enter_room",user_id)
     socket.on("user_entered",(user_id)=>{

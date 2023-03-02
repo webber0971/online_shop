@@ -28,7 +28,8 @@ router.use(session({
 passport.use(new Googlestrategy({
   clientID:process.env.GOOGLE_CLIENT_ID,
   clientSecret : process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL:"/auth/google/callback"
+  // callbackURL:"http://localhost:5000/auth/google/callback"  //本機開發用
+  callbackURL:"http://test8812.foodpass.club/auth/google/callback" //上線要改成這段
 },
   function (accessToken,refreshToken,profile,done){
     console.log(profile) //database code here
@@ -62,7 +63,7 @@ router.get("/success",(req,res)=>{
 
 router.get("/callback",
   passport.authenticate("google",{
-    // successRedirect:"/",
+    // successRedirect:"http://localhost:5000/entrance",
     failureRedirect:"/login"
   }),
   function (request,response){
@@ -100,7 +101,7 @@ router.get("/callback",
           const token=jwt.sign(payload,jwt_secretkey,{expiresIn : "1d"})
           response
           .cookie("access_token",token)
-          .redirect("/")
+          .redirect("/entrance")
         }else{
           response.json({
             "message":"password error"

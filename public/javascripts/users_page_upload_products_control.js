@@ -78,13 +78,14 @@ function sendImageAndMessageContentToServer(imageUrl){
         fd.append("product_name",product_name)
         fd.append("product_price",product_price)
         fd.append("product_status",product_status)
-        fetch("/users/api/products",{
+        fetch("/api/products",{
             method:"post",
             body:fd
         })
         .then((res)=>res.json())
         .then((data)=>{
             console.log(data)
+            alert("上傳成功")
             resolve(data)
         })
         .catch((error)=>{
@@ -130,13 +131,14 @@ function update_product_status(imageUrl){
         let fd=new FormData()
         fd.append("update_product_id",update_product_id)
         fd.append("update_product_status",update_product_status)
-        fetch("/users/api/products",{
+        fetch("/api/products",{
             method:"put",
             body:fd
         })
         .then((res)=>res.json())
         .then((data)=>{
             console.log(data)
+            alert("更新成功")
             resolve(data)
         })
         .catch((error)=>{

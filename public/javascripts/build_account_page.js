@@ -31,17 +31,19 @@ login_with_third.setAttribute("class","login_with_third")
 let block = document.createElement("div")
 
 let google_login_href = document.createElement("a")
-google_login_href.setAttribute("href","http://localhost:5000/auth/google")
+// google_login_href.setAttribute("href","http://localhost:5000/auth/google") // 本機測試用
+google_login_href.setAttribute("href","http://test8812.foodpass.club/auth/google")
+
 let google_login_image = document.createElement("img")
 google_login_image.setAttribute("class","google_login_image")
 
 let fb_login_href = document.createElement("a")
-fb_login_href.setAttribute("href","http://localhost:5000/auth/facebook")
+// fb_login_href.setAttribute("href","http://localhost:5000/auth/facebook")
+fb_login_href.setAttribute("href","http://test8812.foodpass.club/auth/facebook")
+
 fb_login_href.setAttribute("class","fb_login_href")
 let fb_login_image = document.createElement("img")
 fb_login_image.setAttribute("class","fb_login_image")
-
-
 
 account.appendChild(login_page)
 login_page.appendChild(login_form)
