@@ -1,3 +1,7 @@
+@import url(https://fonts.googleapis.com/earlyaccess/cwtexyen.css);
+body{
+    font-family: 'cwTeXYen', sans-serif;
+}
 .entrance_button_layout{
     height: 400px;
     width: 100%;
@@ -5,7 +9,7 @@
     grid-template-columns: 1fr 1fr 1fr 1fr;
     column-gap:3%;
     row-gap: 3%;
-    margin-top: 50px;
+    margin-top: 30px;
 }
 .entrance_button_layout div{
     background-color:rgb(254, 237, 217);
@@ -26,7 +30,7 @@
 }
 .home_page_image{
     margin-top: 20px;
-    background-image: url(/images/online-shop.png);
+    /* background-image: url(/images/online-shop.png); */
     height: 70%;
     width: 100%;
     background-color: aqua;
@@ -37,13 +41,14 @@
     background-size: contain;
 }
 .home_page_text{
+    margin-top: 30px;
     text-align: center;
 }
 
 
 .user_page_image{
     margin-top: 20px;
-    background-image: url(/images/data-analysis.png);
+    /* background-image: url(/images/data-analysis.png); */
     height: 70%;
     width: 100%;
     background-color: aqua;
@@ -54,13 +59,14 @@
     background-size: contain;
 }
 .user_page_text{
+    margin-top: 30px;
     text-align: center;
 }
 
 
 .chat_room_image{
     margin-top: 20px;
-    background-image: url(/images/group-chat.png);
+    /* background-image: url(/images/group-chat.png); */
     height: 70%;
     width: 100%;
     background-color: aqua;
@@ -71,15 +77,17 @@
     background-size: contain;
 }
 .chat_room_text{
+    margin-top: 30px;
     text-align: center;
 }
 
 
 .video_chat_image{
     margin-top: 20px;
-    background-image: url(/images/video-call.png);
+    /* background-image: url(/images/video-call.png); */
     height: 70%;
     width: 100%;
+    /* width: 100px; */
     background-color: aqua;
     display: flex;
     justify-content: center; 
@@ -88,5 +96,28 @@
     background-size: contain;
 }
 .video_chat_text{
+    margin-top: 30px;
     text-align: center;
+}
+img{transform:scale(1,1);transition: all 1s ease-out;}
+img:hover{transform:scale(1.2,1.2);}
+
+.entrance_info{
+    display: flex;
+    /* 水平置中 */
+    justify-content: center;    
+    /* 垂直置中 */
+    align-items: center;  
+    margin-top: 30px;
+    height: 100px;
+    font-size: x-large;
+}
+.entrance_welcome_text{
+    width: 60%;
+    text-align: center;
+    padding: 30px;
+    border-radius: 30px;
+    border-style: solid;
+    border-color: rgb(158, 158, 158);
+    color:cadetblue ;
 }

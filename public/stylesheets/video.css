@@ -72,3 +72,7 @@ body{
 .mic_button_close{
     display: none;
 }
+
+
+img{transform:scale(1,1);transition: all 0.5s ease-out;}
+img:hover{transform:scale(1.2,1.2);}

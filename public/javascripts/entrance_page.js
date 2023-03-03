@@ -2,8 +2,11 @@ console.log("-=-=-=-=-=-=-=-=-=-=-=-===")
 console.log(client_id)
 let user_id=""
 init_entrance_page()
-
-
+let entrance_online_shop_home_page = "客人專用頁面，可以訂購、刪除餐點，以及購物車與查詢歷史訂單。此外右下角還有聊天功能，可以即時與店家聯繫 !"
+let entrance_user_page_text = "店長、員工可以從後台查詢 訂單列表、銷售統計、上傳新品、更改品項狀態、員工回報訂單進度 !"
+let entrance_chat_room = "聊天室，方便店家可以同時回復所有顧客訊息，類似 line official account manager 的聊天功能。同時會員們也可以互加好友聊天 !"
+let entrance_1v1_video_call = "1 對 1 即時視訊功能 !"
+let entrance_welcome_text = document.querySelector(".entrance_welcome_text")
 
 function init_entrance_page(){
     use_member_info_to_build_top_right()
@@ -59,6 +62,10 @@ function add_entrance_button_listener(){
             location.href = "/"
         }
     })
+    home_page.addEventListener("mouseenter",()=>{
+        entrance_welcome_text.textContent = entrance_online_shop_home_page
+    })
+
 
     user_page.addEventListener("click",()=>{
         console.log("user_id = ",user_id)
@@ -70,6 +77,10 @@ function add_entrance_button_listener(){
             location.href = "/users"
         }
     })
+    user_page.addEventListener("mouseenter",()=>{
+        entrance_welcome_text.textContent = entrance_user_page_text
+    })
+
 
     chat_room_entrance.addEventListener("click",()=>{
         console.log("user_id = ",user_id)
@@ -80,6 +91,9 @@ function add_entrance_button_listener(){
         }else{
             location.href = "/users/users_chat_page"
         }
+    })
+    chat_room_entrance.addEventListener("mouseenter",()=>{
+        entrance_welcome_text.textContent = entrance_chat_room
     })
 
     video_chat.addEventListener("click",()=>{
@@ -94,6 +108,9 @@ function add_entrance_button_listener(){
             let url = "/users/video_room/"+String(room_name)
             OpenInNewTab(url)
         }
+    })
+    video_chat.addEventListener("mouseenter",()=>{
+        entrance_welcome_text.textContent = entrance_1v1_video_call
     })
 }
 

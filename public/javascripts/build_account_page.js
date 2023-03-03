@@ -213,11 +213,14 @@ register_submit.addEventListener("click",(event)=>{
         body:fd
     })
     .then((res)=>res.json())
-    .then((data)=>{
+    .then(async (data)=>{
         if("error" in data){
             console.log(data)
             error_message.textContent=data.message
         }else{
+            error_message.textContent = "帳號建立成功!"
+            await sleep(1000)
+            
             register_page.style.display="none"
             login_page.style.display="block"
         }
@@ -244,3 +247,12 @@ login_submit.addEventListener("click",(event)=>{
 
 
 
+
+
+function sleep(n = 0) {
+    return new Promise((resolve) => {
+        setTimeout(function () {
+            resolve();
+        }, n);
+    });
+}
